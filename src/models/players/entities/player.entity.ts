@@ -1,6 +1,6 @@
 import { ResultEntity } from "src/models/results/entities/result.entity";
 import { TournamentEntity } from "src/models/tournament/entities/tournament.entity";
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class PlayerEntity {
@@ -21,4 +21,10 @@ export class PlayerEntity {
 
     @OneToMany(() => ResultEntity, result => result.loserPlayer)
     loser: ResultEntity[];
+
+    @CreateDateColumn({ type: 'timestamp' })
+    createDate: Date;
+  
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt: Date;
 }
