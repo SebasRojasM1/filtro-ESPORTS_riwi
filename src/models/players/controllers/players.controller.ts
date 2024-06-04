@@ -32,7 +32,7 @@ export class PlayersController {
   @ApiResponse({status: 200, description: 'Players found successfully.',})
   @ApiResponse({status: 404, description: 'Players with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while searching for the players.'})
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.playersService.findOne(+id);
   }
 
@@ -42,7 +42,7 @@ export class PlayersController {
   @ApiResponse({status: 404, description: 'Player with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while updating the player.'})
   @ApiBody({ type: CreatePlayerDto })
-  update(@Param('id') id: string, @Body() updatePlayer: UpdatePlayerDto) {
+  update(@Param('id') id: number, @Body() updatePlayer: UpdatePlayerDto) {
     return this.playersService.updatePlayer(+id, updatePlayer);
   }
 
@@ -51,7 +51,7 @@ export class PlayersController {
   @ApiResponse({status: 200, description: 'Player deleted successfully.'})
   @ApiResponse({status: 404, description: 'Player with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while deleting the player.'})
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.playersService.deletePlayer(+id);
   }
 }
