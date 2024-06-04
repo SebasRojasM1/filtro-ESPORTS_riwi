@@ -44,9 +44,10 @@ export class ResultsService {
       dataFound: total,
       results,
     };
-    /*http://localhost:3000/author/search?search=Stephen%20King&sortBy=name&order=ASC&page=1&limit=1 */
-  }
+      /*EJEMPLO PETICION: http://localhost:3000/results/search?search=PES&sortBy=nameTournament&order=ASC&page=1&limit=1 */
+    }
 
+    
   async findAllResults(): Promise<ResultEntity[]> {
 
     const results =  await this.resultRepository.find({ relations: ['winnerPlayer', 'loserPlayer'] });

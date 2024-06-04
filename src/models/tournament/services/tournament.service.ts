@@ -47,7 +47,7 @@ export class TournamentService {
       dataFound: total,
       results,
     };
-    /*http://localhost:3000/author/search?search=Stephen%20King&sortBy=name&order=ASC&page=1&limit=1 */
+      /*EJEMPLO PETICION: http://localhost:3000/tournament/search?search=PES&sortBy=nameTournament&order=ASC&page=1&limit=1 */
   }
 
   async findAllTournaments(): Promise<TournamentEntity[]> {

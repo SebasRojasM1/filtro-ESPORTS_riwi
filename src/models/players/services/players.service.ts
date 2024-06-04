@@ -34,7 +34,7 @@ export class PlayersService {
       dataFound: total,
       results,
     };
-    /*http://localhost:3000/author/search?search=Stephen%20King&sortBy=name&order=ASC&page=1&limit=1 */
+    /*EJEMPLO PETICION: http://localhost:3000/players/search?search=Sebastian&sortBy=namePlayer&order=ASC&page=1&limit=1 */
   }
 
 
