@@ -2,8 +2,9 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { CreateResultDto, UpdateResultDto } from '../dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResultEntity } from '../entities/result.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { PlayerEntity } from 'src/models/players/entities/player.entity';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @Injectable()
 export class ResultsService {
@@ -23,6 +24,27 @@ export class ResultsService {
     });
 
     return await this.resultRepository.save(result);
+  }
+
+  async findBySearch({ limit, order, page, search, sortBy = 'namePlayer' }: PaginationDto) {
+    const [results, total] = await this.playerRepository.findAndCount({
+      where: {
+        namePlayer: ILike(`%${search}%`),
+      },
+      order: {
+        [sortBy]: order,
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      dataFound: total,
+      results,
+    };
+    /*http://localhost:3000/author/search?search=Stephen%20King&sortBy=name&order=ASC&page=1&limit=1 */
   }
 
   async findAllResults(): Promise<ResultEntity[]> {

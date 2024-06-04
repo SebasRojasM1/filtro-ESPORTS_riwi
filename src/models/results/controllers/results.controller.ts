@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseIntPipe, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ParseIntPipe, ValidationPipe, Query } from '@nestjs/common';
 import { ResultsService } from '../services/results.service';
 import { CreateResultDto, UpdateResultDto } from '../dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @ApiTags("Results")
 @Controller('results')
@@ -24,6 +25,11 @@ export class ResultsController {
   @ApiResponse({status: 500,description: 'An internal server error occurred while searching for the results.'})
   findAll() {
     return this.resultsService.findAllResults();
+  }
+
+  @Get("/search")
+  findBySearch(@Query(new ValidationPipe()) pagination: PaginationDto) {
+    return this.resultsService.findBySearch(pagination);
   }
 
   @Get(':id')

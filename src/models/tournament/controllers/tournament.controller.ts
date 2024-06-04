@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ValidationPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { TournamentService } from '../services/tournament.service';
 import { CreateTournamentDto, UpdateTournamentDto } from '../dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @ApiTags("Tournament")
 @Controller('tournament')
@@ -24,6 +25,11 @@ export class TournamentController {
   @ApiResponse({status: 500,description: 'An internal server error occurred while searching for the tournaments.'})
   findAll() {
     return this.tournamentService.findAllTournaments();
+  }
+
+  @Get("/search")
+  findBySearch(@Query(new ValidationPipe()) pagination: PaginationDto) {
+    return this.tournamentService.findBySearch(pagination);
   }
 
   @Get(':id')

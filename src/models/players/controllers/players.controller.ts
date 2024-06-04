@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ValidationPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { PlayersService } from '../services/players.service';
 import { CreatePlayerDto } from '../dto/create-player.dto';
 import { UpdatePlayerDto } from '../dto/update-player.dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @ApiTags("Players")
 @Controller('players')
@@ -16,6 +17,11 @@ export class PlayersController {
   @ApiResponse({status: 500, description: 'An internal server error occurred while creating the player.'})
   create(@Body(new ValidationPipe()) createPlayerDto: CreatePlayerDto) {
     return this.playersService.create(createPlayerDto);
+  }
+
+  @Get("/search")
+  findBySearch(@Query(new ValidationPipe()) pagination: PaginationDto) {
+    return this.playersService.findBySearch(pagination);
   }
 
   @Get("/all")
