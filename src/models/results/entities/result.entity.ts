@@ -1,6 +1,7 @@
+import { Exclude } from "class-transformer";
 import { PlayerEntity } from "src/models/players/entities/player.entity";
 import { TournamentEntity } from "src/models/tournament/entities/tournament.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class ResultEntity {
@@ -21,4 +22,8 @@ export class ResultEntity {
 
     @Column()
     losePoints: number;
+
+    @DeleteDateColumn({ type: 'timestamp' })
+    @Exclude({ toPlainOnly: true })
+    deletedAt?: Date;
 }

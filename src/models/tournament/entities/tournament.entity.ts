@@ -1,6 +1,7 @@
+import { Exclude } from "class-transformer";
 import { PlayerEntity } from "src/models/players/entities/player.entity";
 import { ResultEntity } from "src/models/results/entities/result.entity";
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, DeleteDateColumn, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class TournamentEntity {
@@ -22,4 +23,8 @@ export class TournamentEntity {
 
     @OneToMany(() => ResultEntity, result => result.tournament)
     results: ResultEntity[];
+
+    @DeleteDateColumn({ type: 'timestamp' })
+    @Exclude({ toPlainOnly: true })
+    deletedAt?: Date;
 }

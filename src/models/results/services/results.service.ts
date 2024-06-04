@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateResultDto, UpdateResultDto } from '../dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ResultEntity } from '../entities/result.entity';
@@ -25,19 +25,39 @@ export class ResultsService {
     return await this.resultRepository.save(result);
   }
 
-  findAll() {
-    return `This action returns all results`;
+  async findAllResults(): Promise<ResultEntity[]> {
+
+    const results =  await this.resultRepository.find({ relations: ['winnerPlayer', 'loserPlayer'] });
+  
+    if (!results || results.length === 0) {
+      throw new HttpException('Results not found. Try again.', HttpStatus.NOT_FOUND);
+    }
+
+    return results
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} result`;
+  async findOne(id: number): Promise<ResultEntity> {
+    return await this.resultRepository.findOne({ 
+      where: { id }, 
+      relations: ['winnerPlayer', 'loserPlayer'] 
+    });
   }
 
-  update(id: number, updateResultDto: UpdateResultDto) {
-    return `This action updates a #${id} result`;
+  async updateResults(id: number, UpdateResult: UpdateResultDto): Promise<ResultEntity> {
+    await this.resultRepository.update(id, UpdateResult);
+
+    return await this.resultRepository.findOne(
+      { where: { id } }
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} result`;
+  async deleteResults(id: number){
+    const result = await this.resultRepository.softDelete(id);
+
+    if (!result) {
+      throw new NotFoundException(`The tournament with ID ${id} was not found`);
+    }
+
+    return result
   }
 }
