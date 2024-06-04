@@ -12,22 +12,24 @@ export class TournamentService {
     @InjectRepository(PlayerEntity) private playerRepository: Repository<PlayerEntity>,
   ) {}
 
+  
   async create(createTournament: CreateTournamentDto): Promise<TournamentEntity> {
     const { nameTournament, category, gameName, playerIds } = createTournament;
 
-    const playersIds = await this.playerRepository.findByIds(playerIds);
+    const playersId = await this.playerRepository.findByIds(playerIds);
 
     const tournament = this.tournamentRepository.create({
       nameTournament,
-      category,
+      category, 
       gameName,
-      players: playersIds, //Agrega el array de IDs de jugadores
+      players: playersId, //Agrega el array de IDs de jugadores
     });
 
     return await this.tournamentRepository.save(tournament);
   }
 
   async findAllTournaments(): Promise<TournamentEntity[]> {
+
     const tournaments =  await this.tournamentRepository.find({ relations: ['players'] });
   
     if (!tournaments || tournaments.length === 0) {
@@ -46,13 +48,15 @@ export class TournamentService {
 
   async updateTournament(id: number, updateTournamentDto: UpdateTournamentDto): Promise<TournamentEntity> {
     await this.tournamentRepository.update(id, updateTournamentDto);
+
     return await this.tournamentRepository.findOne(
       { where: { id } }
     );
   }
 
   async deleteTournament(id: number){
-    const result = await this.tournamentRepository.delete(id);
+    const result = await this.tournamentRepository.softDelete(id);
+
     if (!result) {
       throw new NotFoundException(`The tournament with ID ${id} was not found`);
     }

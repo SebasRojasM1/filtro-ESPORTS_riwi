@@ -27,8 +27,6 @@ export class PlayersService {
     return player
   }
 
-
-
   async findOne(id: number) {
     const player = this.playerRepository.findOne(
       { where: { id }, 
@@ -41,7 +39,6 @@ export class PlayersService {
 
     return player
   }
-
 
   async updatePlayer(id: number, UpdatePlayer: UpdatePlayerDto) {
     await this.playerRepository.update(id, UpdatePlayer);
