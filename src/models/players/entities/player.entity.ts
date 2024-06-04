@@ -1,5 +1,5 @@
 import { TournamentEntity } from "src/models/tournament/entities/tournament.entity";
-import { Column, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class PlayerEntity {
@@ -12,10 +12,6 @@ export class PlayerEntity {
     @Column()
     email: string;
 
-    @OneToMany(() => TournamentEntity, (tournament) => tournament.player)
-    @JoinColumn({ name: 'tournament_Id'})
+    @ManyToMany(() => TournamentEntity, tournament => tournament.players)
     tournaments: TournamentEntity[];
-
-    @Column()
-    tournament_Id: number;
 }
