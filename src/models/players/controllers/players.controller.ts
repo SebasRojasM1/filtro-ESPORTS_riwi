@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { PlayersService } from '../services/players.service';
 import { CreatePlayerDto } from '../dto/create-player.dto';
 import { UpdatePlayerDto } from '../dto/update-player.dto';
@@ -14,7 +14,7 @@ export class PlayersController {
   @ApiResponse({status: 201, description: 'Player created successfully.'})
   @ApiResponse({status: 400, description: 'The data entered to create the player is invalid.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while creating the player.'})
-  create(@Body() createPlayerDto: CreatePlayerDto) {
+  create(@Body(new ValidationPipe()) createPlayerDto: CreatePlayerDto) {
     return this.playersService.create(createPlayerDto);
   }
 
@@ -32,7 +32,7 @@ export class PlayersController {
   @ApiResponse({status: 200, description: 'Players found successfully.',})
   @ApiResponse({status: 404, description: 'Players with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while searching for the players.'})
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.playersService.findOne(+id);
   }
 
@@ -42,7 +42,7 @@ export class PlayersController {
   @ApiResponse({status: 404, description: 'Player with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while updating the player.'})
   @ApiBody({ type: CreatePlayerDto })
-  update(@Param('id') id: number, @Body() updatePlayer: UpdatePlayerDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe()) updatePlayer: UpdatePlayerDto) {
     return this.playersService.updatePlayer(+id, updatePlayer);
   }
 
@@ -51,7 +51,7 @@ export class PlayersController {
   @ApiResponse({status: 200, description: 'Player deleted successfully.'})
   @ApiResponse({status: 404, description: 'Player with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while deleting the player.'})
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.playersService.deletePlayer(+id);
   }
 }

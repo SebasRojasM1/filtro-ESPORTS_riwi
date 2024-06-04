@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ValidationPipe, ParseIntPipe } from '@nestjs/common';
 import { TournamentService } from '../services/tournament.service';
 import { CreateTournamentDto, UpdateTournamentDto } from '../dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -13,8 +13,8 @@ export class TournamentController {
   @ApiResponse({status: 201, description: 'Tournament created successfully.'})
   @ApiResponse({status: 400, description: 'The data entered to create the tournament is invalid.'})
   @ApiResponse({status: 500, description: 'a internal server error occurred while creating the tournament.'})
-  create(@Body() createTournamentDto: CreateTournamentDto) {
-    return this.tournamentService.create(createTournamentDto);
+  create(@Body(new ValidationPipe()) createTournamentDto: CreateTournamentDto) {
+    return this.tournamentService.createTournament(createTournamentDto);
   }
 
   @Get("/all")
@@ -31,7 +31,7 @@ export class TournamentController {
   @ApiResponse({status: 200, description: 'Tournament found successfully.',})
   @ApiResponse({status: 404, description: 'Tournament with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while searching for the tournament.'})
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.tournamentService.findOne(+id);
   }
 
@@ -41,7 +41,7 @@ export class TournamentController {
   @ApiResponse({status: 404, description: 'The tournament with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while updating the tournament.'})
   @ApiBody({ type: CreateTournamentDto })
-  update(@Param('id') id: number, @Body() updateTournament: UpdateTournamentDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe()) updateTournament: UpdateTournamentDto) {
     return this.tournamentService.updateTournament(id, updateTournament);
   }
 
@@ -50,7 +50,7 @@ export class TournamentController {
   @ApiResponse({status: 200, description: 'Tournament deleted successfully.'})
   @ApiResponse({status: 404, description: 'Tournament with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while deleting the tournament.'})
-  remove(@Param('id') id: number) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.tournamentService.deleteTournament(+id);
   }
 }

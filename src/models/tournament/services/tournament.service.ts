@@ -13,7 +13,7 @@ export class TournamentService {
   ) {}
 
   
-  async create(createTournament: CreateTournamentDto): Promise<TournamentEntity> {
+  async createTournament(createTournament: CreateTournamentDto): Promise<TournamentEntity> {
     const { nameTournament, category, gameName, playerIds } = createTournament;
 
     const playersId = await this.playerRepository.findByIds(playerIds);

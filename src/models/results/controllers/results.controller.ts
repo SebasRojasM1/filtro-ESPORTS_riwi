@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ParseIntPipe, ValidationPipe } from '@nestjs/common';
 import { ResultsService } from '../services/results.service';
 import { CreateResultDto, UpdateResultDto } from '../dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -13,7 +13,7 @@ export class ResultsController {
   @ApiResponse({status: 201, description: 'Result created successfully.'})
   @ApiResponse({status: 400, description: 'The data entered to create the result is invalid.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while creating the result.'})
-  create(@Body() createResultDto: CreateResultDto) {
+  create(@Body(new ValidationPipe()) createResultDto: CreateResultDto) {
     return this.resultsService.create(createResultDto);
   }
 
@@ -31,7 +31,7 @@ export class ResultsController {
   @ApiResponse({status: 200, description: 'Results found successfully.',})
   @ApiResponse({status: 404, description: 'Results with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while searching for the results.'})
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.resultsService.findOne(+id);
   }
 
@@ -41,7 +41,7 @@ export class ResultsController {
   @ApiResponse({status: 404, description: 'Results with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while updating the results.'})
   @ApiBody({ type: CreateResultDto })
-  update(@Param('id') id: string, @Body() updateResultDto: UpdateResultDto) {
+  update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe()) updateResultDto: UpdateResultDto) {
     return this.resultsService.update(+id, updateResultDto);
   }
 
@@ -50,7 +50,7 @@ export class ResultsController {
   @ApiResponse({status: 200, description: 'Result deleted successfully.'})
   @ApiResponse({status: 404, description: 'Result with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while deleting the result.'})
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.resultsService.remove(+id);
   }
 }
