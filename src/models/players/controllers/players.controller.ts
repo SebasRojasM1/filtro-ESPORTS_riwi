@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put, ValidationPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { PlayersService } from '../services/players.service';
 import { CreatePlayerDto } from '../dto/create-player.dto';
 import { UpdatePlayerDto } from '../dto/update-player.dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @ApiTags("Players")
 @Controller('players')
@@ -16,6 +17,17 @@ export class PlayersController {
   @ApiResponse({status: 500, description: 'An internal server error occurred while creating the player.'})
   create(@Body(new ValidationPipe()) createPlayerDto: CreatePlayerDto) {
     return this.playersService.create(createPlayerDto);
+  }
+
+  @Get("/search")
+  @ApiOperation({ summary: 'Find all the players by Search.', description: 'View all players registered in the system by a search.' })
+  @ApiQuery({ name: 'limit', required: true, description: 'Número de elementos por página', example: 10 })
+  @ApiQuery({ name: 'order', required: true, description: 'Orden de los resultados', enum: ['ASC', 'DESC'] })
+  @ApiQuery({ name: 'page', required: true, description: 'Página actual', example: 1 })
+  @ApiQuery({ name: 'search', required: true, description: 'Término de búsqueda', example: 'namePlayer' })
+  @ApiQuery({ name: 'sortBy', required: true, description: 'Campo por el cual ordenar', example: 'createDate' })
+  findBySearch(@Query(new ValidationPipe()) pagination: PaginationDto) {
+    return this.playersService.findBySearch(pagination);
   }
 
   @Get("/all")

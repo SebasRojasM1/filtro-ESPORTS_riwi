@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { TournamentEntity } from '../entities/tournament.entity';
 import { CreateTournamentDto, UpdateTournamentDto } from '../dto';
 import { PlayerEntity } from 'src/models/players/entities/player.entity';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @Injectable()
 export class TournamentService {
@@ -26,6 +27,27 @@ export class TournamentService {
     });
 
     return await this.tournamentRepository.save(tournament);
+  }
+
+  async findBySearch({ limit, order, page, search, sortBy = 'nameTournament' }: PaginationDto) {
+    const [results, total] = await this.tournamentRepository.findAndCount({
+      where: {
+        nameTournament: ILike(`%${search}%`),
+      },
+      order: {
+        [sortBy]: order,
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      dataFound: total,
+      results,
+    };
+      /*EJEMPLO PETICION: http://localhost:3000/tournament/search?search=PES&sortBy=nameTournament&order=ASC&page=1&limit=1 */
   }
 
   async findAllTournaments(): Promise<TournamentEntity[]> {

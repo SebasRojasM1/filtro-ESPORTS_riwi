@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ParseIntPipe, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ParseIntPipe, ValidationPipe, Query } from '@nestjs/common';
 import { ResultsService } from '../services/results.service';
 import { CreateResultDto, UpdateResultDto } from '../dto';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @ApiTags("Results")
 @Controller('results')
@@ -23,7 +24,12 @@ export class ResultsController {
   @ApiResponse({status: 404, description: 'No results were found in the system.'})
   @ApiResponse({status: 500,description: 'An internal server error occurred while searching for the results.'})
   findAll() {
-    return this.resultsService.findAll();
+    return this.resultsService.findAllResults();
+  }
+
+  @Get("/search")
+  findBySearch(@Query(new ValidationPipe()) pagination: PaginationDto) {
+    return this.resultsService.findBySearch(pagination);
   }
 
   @Get(':id')
@@ -42,7 +48,7 @@ export class ResultsController {
   @ApiResponse({status: 500, description: 'An internal server error occurred while updating the results.'})
   @ApiBody({ type: CreateResultDto })
   update(@Param('id', ParseIntPipe) id: number, @Body(new ValidationPipe()) updateResultDto: UpdateResultDto) {
-    return this.resultsService.update(+id, updateResultDto);
+    return this.resultsService.updateResults(+id, updateResultDto);
   }
 
   @Delete('delete/:id')
@@ -51,6 +57,6 @@ export class ResultsController {
   @ApiResponse({status: 404, description: 'Result with the entered ID not found.'})
   @ApiResponse({status: 500, description: 'An internal server error occurred while deleting the result.'})
   remove(@Param('id', ParseIntPipe) id: number) {
-    return this.resultsService.remove(+id);
+    return this.resultsService.deleteResults(+id);
   }
 }

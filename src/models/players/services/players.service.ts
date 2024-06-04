@@ -2,7 +2,8 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestj
 import { CreatePlayerDto, UpdatePlayerDto } from '../dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PlayerEntity } from '../entities/player.entity';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @Injectable()
 export class PlayersService {
@@ -14,6 +15,28 @@ export class PlayersService {
 
     return this.playerRepository.save(author);
   }
+
+  async findBySearch({ limit, order, page, search, sortBy = 'namePlayer' }: PaginationDto) {
+    const [results, total] = await this.playerRepository.findAndCount({
+      where: {
+        namePlayer: ILike(`%${search}%`),
+      },
+      order: {
+        [sortBy]: order,
+      },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
+
+    return {
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      dataFound: total,
+      results,
+    };
+    /*EJEMPLO PETICION: http://localhost:3000/players/search?search=Sebastian&sortBy=namePlayer&order=ASC&page=1&limit=1 */
+  }
+
 
   async findAllPlayers(): Promise<PlayerEntity[]> {
     const player =  await this.playerRepository.find(

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, ValidationPipe, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, ValidationPipe, ParseIntPipe, Query } from '@nestjs/common';
 import { TournamentService } from '../services/tournament.service';
 import { CreateTournamentDto, UpdateTournamentDto } from '../dto';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PaginationDto } from 'src/libs/pagination/pagination.dto';
 
 @ApiTags("Tournament")
 @Controller('tournament')
@@ -24,6 +25,17 @@ export class TournamentController {
   @ApiResponse({status: 500,description: 'An internal server error occurred while searching for the tournaments.'})
   findAll() {
     return this.tournamentService.findAllTournaments();
+  }
+
+  @Get("/search")
+  @ApiOperation({ summary: 'Find all the tournaments by Search.', description: 'View all the tournaments registered in the system by a search.' })
+  @ApiQuery({ name: 'limit', required: true, description: 'Número de elementos por página', example: 10 })
+  @ApiQuery({ name: 'order', required: true, description: 'Orden de los resultados', enum: ['ASC', 'DESC'] })
+  @ApiQuery({ name: 'page', required: true, description: 'Página actual', example: 1 })
+  @ApiQuery({ name: 'search', required: true, description: 'Término de búsqueda', example: 'nameTournament' })
+  @ApiQuery({ name: 'sortBy', required: true, description: 'Campo por el cual ordenar', example: 'createDate' })
+  findBySearch(@Query(new ValidationPipe()) pagination: PaginationDto) {
+    return this.tournamentService.findBySearch(pagination);
   }
 
   @Get(':id')
