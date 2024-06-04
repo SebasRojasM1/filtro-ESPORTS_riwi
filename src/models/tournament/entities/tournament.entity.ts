@@ -16,6 +16,6 @@ export class TournamentEntity {
     @OneToMany(() => PlayerEntity, (player) => player.tournaments)
     player: PlayerEntity[];
 
-    @OneToMany(() => ResultEntity, (result) => result.player)
-    results: ResultEntity[];
+/*     @OneToMany(() => ResultEntity, (result) => result.player)
+    results: ResultEntity[]; */
 }
