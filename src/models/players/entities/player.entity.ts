@@ -1,5 +1,6 @@
+import { ResultEntity } from "src/models/results/entities/result.entity";
 import { TournamentEntity } from "src/models/tournament/entities/tournament.entity";
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class PlayerEntity {
@@ -14,4 +15,10 @@ export class PlayerEntity {
 
     @ManyToMany(() => TournamentEntity, tournament => tournament.players)
     tournaments: TournamentEntity[];
+
+    @OneToMany(() => ResultEntity, result => result.winnerPlayer)
+    winner: ResultEntity[];
+
+    @OneToMany(() => ResultEntity, result => result.loserPlayer)
+    loser: ResultEntity[];
 }

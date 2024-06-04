@@ -1,10 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateResultDto, UpdateResultDto } from '../dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ResultEntity } from '../entities/result.entity';
+import { Repository } from 'typeorm';
+import { PlayerEntity } from 'src/models/players/entities/player.entity';
 
 @Injectable()
 export class ResultsService {
-  create(createResultDto: CreateResultDto) {
-    return 'This action adds a new result';
+  constructor(@InjectRepository(ResultEntity) private resultRepository: Repository<ResultEntity>, 
+  @InjectRepository(PlayerEntity) private playerRepository: Repository<PlayerEntity>) {}
+
+  async create(createResult: CreateResultDto): Promise<ResultEntity> {
+    const { winnerId, loserId } = createResult;
+    
+    const winnerPlayer = await this.playerRepository.findOne({ where: { id: winnerId } });
+    const loserPlayer = await this.playerRepository.findOne({ where: { id: loserId } });
+
+    const result = this.resultRepository.create({
+      ...createResult,
+      winnerPlayer,
+      loserPlayer,
+    });
+
+    return await this.resultRepository.save(result);
   }
 
   findAll() {
