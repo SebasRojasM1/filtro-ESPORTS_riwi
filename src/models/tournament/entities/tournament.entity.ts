@@ -13,6 +13,9 @@ export class TournamentEntity {
     @Column()
     category: string;
 
+    @Column()
+    gameName: string
+
     @ManyToMany(() => PlayerEntity)
     @JoinTable()
     players: PlayerEntity[];

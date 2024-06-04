@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/
 import { PlayersService } from '../services/players.service';
 import { CreatePlayerDto } from '../dto/create-player.dto';
 import { UpdatePlayerDto } from '../dto/update-player.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("Players")
 @Controller('players')
@@ -25,6 +25,7 @@ export class PlayersController {
   }
 
   @Put('update/:id')
+  @ApiBody({ type: CreatePlayerDto })
   update(@Param('id') id: string, @Body() updatePlayer: UpdatePlayerDto) {
     return this.playersService.updatePlayer(+id, updatePlayer);
   }

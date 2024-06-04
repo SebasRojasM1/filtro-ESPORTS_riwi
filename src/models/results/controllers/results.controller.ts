@@ -1,20 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Put } from '@nestjs/common';
 import { ResultsService } from '../services/results.service';
-import { CreateResultDto } from '../dto/create-result.dto';
-import { UpdateResultDto } from '../dto/update-result.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateResultDto, UpdateResultDto } from '../dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("Results")
 @Controller('results')
 export class ResultsController {
   constructor(private readonly resultsService: ResultsService) {}
 
-  @Post()
+  @Post("/create")
   create(@Body() createResultDto: CreateResultDto) {
     return this.resultsService.create(createResultDto);
   }
 
-  @Get()
+  @Get("/all")
   findAll() {
     return this.resultsService.findAll();
   }
@@ -24,12 +23,13 @@ export class ResultsController {
     return this.resultsService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Put('update/:id')
+  @ApiBody({ type: CreateResultDto })
   update(@Param('id') id: string, @Body() updateResultDto: UpdateResultDto) {
     return this.resultsService.update(+id, updateResultDto);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   remove(@Param('id') id: string) {
     return this.resultsService.remove(+id);
   }

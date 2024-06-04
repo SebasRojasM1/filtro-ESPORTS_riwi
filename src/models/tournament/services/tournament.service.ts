@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TournamentEntity } from '../entities/tournament.entity';
@@ -13,13 +13,14 @@ export class TournamentService {
   ) {}
 
   async create(createTournament: CreateTournamentDto): Promise<TournamentEntity> {
-    const { nameTournament, category, playerIds } = createTournament;
+    const { nameTournament, category, gameName, playerIds } = createTournament;
 
     const playersIds = await this.playerRepository.findByIds(playerIds);
 
     const tournament = this.tournamentRepository.create({
       nameTournament,
       category,
+      gameName,
       players: playersIds, //Agrega el array de IDs de jugadores
     });
 
@@ -27,11 +28,20 @@ export class TournamentService {
   }
 
   async findAllTournaments(): Promise<TournamentEntity[]> {
-    return await this.tournamentRepository.find({ relations: ['players'] });
+    const tournaments =  await this.tournamentRepository.find({ relations: ['players'] });
+  
+    if (!tournaments || tournaments.length === 0) {
+      throw new HttpException('Tournaments not found. Try again.', HttpStatus.NOT_FOUND);
+    }
+
+    return tournaments
   }
 
   async findOne(id: number): Promise<TournamentEntity> {
-    return await this.tournamentRepository.findOne({ where: { id }, relations: ['players'] });
+    return await this.tournamentRepository.findOne({ 
+      where: { id }, 
+      relations: ['players'] 
+    });
   }
 
   async updateTournament(id: number, updateTournamentDto: UpdateTournamentDto): Promise<TournamentEntity> {
@@ -41,10 +51,12 @@ export class TournamentService {
     );
   }
 
-  async deleteTournament(id: number): Promise<void> {
+  async deleteTournament(id: number){
     const result = await this.tournamentRepository.delete(id);
-    if (result.affected === 0) {
+    if (!result) {
       throw new NotFoundException(`The tournament with ID ${id} was not found`);
     }
+
+    return result
   }
 }

@@ -14,6 +14,12 @@ export class CreateTournamentDto {
   @ApiProperty()
   category: string;
 
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty()
+  gameName: string;
+
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMinSize(1)

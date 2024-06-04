@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { TournamentService } from '../services/tournament.service';
-import { CreateTournamentDto } from '../dto/create-tournament.dto';
-import { UpdateTournamentDto } from '../dto/update-tournament.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { CreateTournamentDto, UpdateTournamentDto } from '../dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 
 @ApiTags("Tournament")
 @Controller('tournament')
@@ -25,6 +24,7 @@ export class TournamentController {
   }
 
   @Put('update/:id')
+  @ApiBody({ type: CreateTournamentDto })
   update(@Param('id') id: string, @Body() updateTournament: UpdateTournamentDto) {
     return this.tournamentService.updateTournament(+id, updateTournament);
   }
