@@ -13,6 +13,9 @@ export class PrizeEntity {
     @Column({ type: 'enum', enum: Prize })
     prize: Prize;
 
+    @Column({ default: false })
+    claimed: boolean;
+
     @CreateDateColumn({ type: 'timestamp' })
     claimedAt: Date;
 

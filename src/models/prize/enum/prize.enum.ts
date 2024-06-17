@@ -1,5 +1,5 @@
 export enum Prize {
-    PRIZE_1 = 'Prize 1',
-    PRIZE_2 = 'Prize 2',
-    PRIZE_3 = 'Prize 3',
+    PRIZE_1 = 'Hamburguesa',
+    PRIZE_2 = 'Salchipapa',
+    PRIZE_3 = 'Bonyurt',
 }

@@ -10,6 +10,9 @@ import { TournamentEntity } from './models/tournament/entities/tournament.entity
 import { PlayersService } from './models/players/services/players.service';
 import { ResultsService } from './models/results/services/results.service';
 import { TournamentService } from './models/tournament/services/tournament.service';
+import { PrizeEntity } from './models/prize/entities/prize.entity';
+import { PrizeController } from './models/prize/controllers/prize.controller';
+import { PrizeService } from './models/prize/service/prize.service';
 
 @Module({
   imports: [
@@ -26,14 +29,14 @@ import { TournamentService } from './models/tournament/services/tournament.servi
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
-      entities: [PlayerEntity, ResultEntity, TournamentEntity],
+      entities: [PlayerEntity, ResultEntity, TournamentEntity, PrizeEntity],
       extra: {
         ssl: true,
       },
     }),
-    TypeOrmModule.forFeature([PlayerEntity, ResultEntity, TournamentEntity]),
+    TypeOrmModule.forFeature([PlayerEntity, ResultEntity, TournamentEntity, PrizeEntity]),
   ],
-  controllers: [PlayersController, ResultsController, TournamentController],
-  providers: [PlayersService, ResultsService, TournamentService],
+  controllers: [PlayersController, ResultsController, TournamentController, PrizeController],
+  providers: [PlayersService, ResultsService, TournamentService, PrizeService],
 })
 export class AppModule {}

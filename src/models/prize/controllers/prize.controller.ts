@@ -1,34 +1,47 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { PrizeService } from './prize.service';
-import { CreatePrizeDto } from '../dto/create-prize.dto';
-import { UpdatePrizeDto } from '../dto/update-prize.dto';
+/* eslint-disable prettier/prettier */
+import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { PrizeService } from '../service/prize.service';
+import { CreatePrizeDto, UpdatePrizeDto } from '../dto';
+import { Cron } from '@nestjs/schedule';
+import { PrizeEntity } from '../entities/prize.entity';
 
 @Controller('prize')
 export class PrizeController {
   constructor(private readonly prizeService: PrizeService) {}
 
+  @Cron('59 23 * * *', { timeZone: 'America/Bogota' })
+  async handleAssignUnclaimedPrizes() {
+      await this.prizeService.assignUnclaimedPrizes();
+  }
+  
+
+  @Post('assign')
+  async assignPrize(@Body() createPrize: CreatePrizeDto): Promise<PrizeEntity> {
+    return this.prizeService.assignRandomPrize(createPrize);
+  }
+
   @Post()
-  create(@Body() createPrizeDto: CreatePrizeDto) {
-    return this.prizeService.create(createPrizeDto);
+  async create(@Body() createPrize: CreatePrizeDto): Promise<PrizeEntity> {
+    return this.prizeService.createPrize(createPrize);
   }
 
   @Get()
-  findAll() {
+  async findAll(): Promise<PrizeEntity[]> {
     return this.prizeService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.prizeService.findOne(+id);
+  async findOne(@Param('id') id: number): Promise<PrizeEntity> {
+    return this.prizeService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePrizeDto: UpdatePrizeDto) {
-    return this.prizeService.update(+id, updatePrizeDto);
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() updatePrize: UpdatePrizeDto): Promise<PrizeEntity> {
+    return this.prizeService.update(id, updatePrize);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.prizeService.remove(+id);
+  async remove(@Param('id') id: number): Promise<void> {
+    return this.prizeService.remove(id);
   }
 }
